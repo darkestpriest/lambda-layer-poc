@@ -1,4 +1,4 @@
-include("repository")
+include("app", "repository")
 
 buildCache {
     local {
