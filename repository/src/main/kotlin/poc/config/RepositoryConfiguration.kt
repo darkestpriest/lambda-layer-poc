@@ -13,7 +13,7 @@ import java.lang.UnsupportedOperationException
 import java.net.URI
 import java.time.Clock
 
-object Configuration {
+object RepositoryConfiguration {
 
     private const val profileEnvVar = "PROFILE"
     private const val tableNameEnVar = "TABLE_NAME"
