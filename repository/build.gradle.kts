@@ -30,12 +30,14 @@ dependencies {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+    finalizedBy("buildZip")
 }
 
 tasks.register<Zip>("buildZip") {
     from(tasks.compileKotlin)
     from(tasks.processResources)
     into("java/lib") {
+        logger.debug("about to build ${project.name} zip distribution")
         from(configurations.compileClasspath)
         from(configurations.runtimeClasspath)
     }
