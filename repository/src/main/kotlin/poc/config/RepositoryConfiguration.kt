@@ -1,5 +1,6 @@
 package poc.config
 
+import poc.config.RepositoryConfiguration.getProperty
 import poc.repository.DynamoEntityRepository
 import poc.repository.EntityRepository
 import software.amazon.awssdk.auth.credentials.AwsCredentials
@@ -26,7 +27,7 @@ object RepositoryConfiguration {
         )
     }
 
-    private fun getProperty(key: String): String = System.getProperty(key, System.getenv(key))?.apply {
+    fun getProperty(key: String): String = System.getProperty(key, System.getenv(key))?.apply {
         if (this.isBlank()) throw IllegalArgumentException("property $key cannot be empty")
     } ?: throw IllegalArgumentException("property $key is required")
 }
@@ -37,6 +38,7 @@ class DynamoClientBuilder(
     companion object {
         private const val local = "LOCAL"
         private const val live = "LIVE"
+        private const val dynamoHostEnvVar = "LOCAL_DYNAMO_HOST"
     }
 
     fun build(): DynamoDbClient =
@@ -67,7 +69,7 @@ class DynamoClientBuilder(
                             }
                         }
                     }).region(Region.US_WEST_2)
-                    .endpointOverride(URI.create("http://host.docker.internal:8000/")).build()
+                    .endpointOverride(URI.create(getProperty(dynamoHostEnvVar))).build()
 
     private fun builder() =
             DynamoDbClient.builder()
