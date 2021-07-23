@@ -35,7 +35,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 tasks.register<Zip>("buildZip") {
     from(tasks.compileKotlin)
     from(tasks.processResources)
-    into("lib") {
+    into("java/lib") {
         from(configurations.compileClasspath)
+        from(configurations.runtimeClasspath)
     }
 }
