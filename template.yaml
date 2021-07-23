@@ -1,0 +1,81 @@
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: "java8.al2"
+    Timeout: 30
+    MemorySize: 768
+    AutoPublishAlias: live
+    DeploymentPreference:
+      Type: AllAtOnce
+    Environment:
+      Variables:
+        PROFILE: LIVE
+        TABLE_NAME: !Ref EntityTable
+        LOCAL_DYNAMO_HOST: http://127.0.0.1:8000/
+
+Resources:
+  EntityApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: 'app'
+      Handler: 'poc.handler.ApiRequestHandler'
+      Layers:
+        - arn:aws:lambda:us-west-2:{aws-account-id}:layer:poc-repo-layer:{version}
+
+      Events:
+        Find:
+          Type: Api
+          Properties:
+            Method: get
+            Path: /entity/{id}
+            RestApiId:
+              Ref: ApiGatewayApiRest
+
+        FindAll:
+          Type: Api
+          Properties:
+            Method: get
+            Path: /entity/all
+            RestApiId:
+              Ref: ApiGatewayApiRest
+
+        Save:
+          Type: Api
+          Properties:
+            Method: post
+            Path: /entity
+            RestApiId:
+              Ref: ApiGatewayApiRest
+
+        Delete:
+          Type: Api
+          Properties:
+            Method: delete
+            Path: /entity/{id}
+            RestApiId:
+              Ref: ApiGatewayApiRest
+
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref EntityTable
+
+  ApiGatewayApiRest:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: main
+
+  EntityTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
