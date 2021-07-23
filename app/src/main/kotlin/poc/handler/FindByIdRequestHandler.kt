@@ -11,7 +11,7 @@ class FindByIdRequestHandler (
         private val mapper: ApiGatewayMapper,
         private val service: EntityService
 ): RequestHandlerTemplate<String, Entity>(){
-    override val path: String by lazy { "entity" }
+    override val path: String by lazy { "/entity/{id}" }
     override val method: String by lazy { "GET" }
 
     override fun apply(entity: String): Entity {

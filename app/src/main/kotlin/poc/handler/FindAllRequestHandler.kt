@@ -11,7 +11,7 @@ class FindAllRequestHandler(
         private val service: EntityService
 ): RequestHandlerTemplate<Unit, List<Entity>>() {
 
-    override val path: String by lazy { "entity/all" }
+    override val path: String by lazy { "/entity/all" }
     override val method: String by lazy { "GET" }
 
     override fun apply(entity: Unit): List<Entity> {

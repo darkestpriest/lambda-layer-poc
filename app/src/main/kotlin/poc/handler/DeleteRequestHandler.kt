@@ -24,6 +24,6 @@ class DeleteRequestHandler(
     }
 
     override fun parseFrom(response: Boolean): APIGatewayProxyResponseEvent {
-        return mapper.ok(response)
+        return mapper.ok(response.toString())
     }
 }

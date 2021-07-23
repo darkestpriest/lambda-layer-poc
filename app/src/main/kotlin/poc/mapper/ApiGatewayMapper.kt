@@ -7,14 +7,14 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import poc.expections.MethodNotAllowed
 import poc.model.Entity
+import poc.serializer.EntitySerializable
 
 class ApiGatewayMapper(
         private val jsonMapper: Json
 ) {
 
     companion object {
-        private const val GET = "GET"
-        private const val ROOT = "entity"
+        private const val ROOT = "/entity"
         private const val FIND_ALL_PATH = "$ROOT/all"
     }
 
@@ -31,12 +31,25 @@ class ApiGatewayMapper(
     }
 
     fun toTransientEntity(request: APIGatewayProxyRequestEvent): Entity {
-        return jsonMapper.decodeFromString(request.body ?: throw IllegalArgumentException("body is required"))
+        val transientEntity: EntitySerializable = jsonMapper.decodeFromString(request.body ?: throw IllegalArgumentException("body is required"))
+        return transientEntity.to()
     }
 
-    fun ok(entity: Any): APIGatewayProxyResponseEvent {
+    fun ok(entity: Entity): APIGatewayProxyResponseEvent {
         return APIGatewayProxyResponseEvent()
                 .withStatusCode(200)
-                .withBody(jsonMapper.encodeToString(entity))
+                .withBody(jsonMapper.encodeToString(EntitySerializable.from(entity)))
+    }
+
+    fun ok(entities: List<Entity>): APIGatewayProxyResponseEvent {
+        return APIGatewayProxyResponseEvent()
+                .withStatusCode(200)
+                .withBody(jsonMapper.encodeToString(entities.map { EntitySerializable.from(it) }))
+    }
+
+    fun ok(body: String): APIGatewayProxyResponseEvent {
+        return APIGatewayProxyResponseEvent()
+                .withStatusCode(200)
+                .withBody(body)
     }
 }
