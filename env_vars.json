@@ -1,0 +1,7 @@
+{
+  "EntityApiFunction": {
+    "PROFILE": "LOCAL",
+    "TABLE_NAME": "entity",
+    "LOCAL_DYNAMO_HOST": "http://127.0.0.1:8000/"
+  }
+}
