@@ -21,7 +21,7 @@ Resources:
       CodeUri: 'app'
       Handler: 'poc.handler.ApiRequestHandler'
       Layers:
-        - arn:aws:lambda:us-west-2:{aws-account-id}:layer:poc-repo-layer:{version}
+        - !Ref RepositoryLayer
 
       Events:
         Find:
@@ -79,3 +79,14 @@ Resources:
           KeyType: HASH
         - AttributeName: id
           KeyType: RANGE
+
+  RepositoryLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: poc-repository-lambda-layer
+      Description: poc repository layer.
+      ContentUri: 'repository/build/distributions/repository.zip'
+      LicenseInfo: 'https://spdx.org/licenses/Apache-2.0.html'
+      CompatibleRuntimes:
+        - java8.al2
+      RetentionPolicy: Delete
